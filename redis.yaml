@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {name}
+  labels:
+    app: {name} 
+spec:
+  serviceName: {name}-headless
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: {name}
+  template:
+    metadata:
+      labels:
+        app: {name}
+    spec:
+      containers:
+      - name: redis
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        image: "{image}"
+        ports:
+        - containerPort: 6379
+          name: redis
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      storageClassName: "{storageClassName}"
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: "{storageSize}"
+
